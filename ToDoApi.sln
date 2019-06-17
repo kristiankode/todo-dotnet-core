@@ -1,11 +1,15 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.0.0
-MinimumVisualStudioVersion = 10.0.0.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToDoApi", "ToDoApi\ToDoApi.csproj", "{DBD3681D-9357-49FC-B5AE-CCCDC8D1D2F5}"
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28922.388
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDoApi", "ToDoApi\ToDoApi.csproj", "{DBD3681D-9357-49FC-B5AE-CCCDC8D1D2F5}"
 EndProject
-Project("{7CCEDD09-9ADE-4C50-993A-FEC74CE31AA6}") = "ToDoApi.Tests", "ToDoApi.Tests\ToDoApi.Tests.csproj", "{4FB75364-2E21-4E9E-BF46-9D24140AEB7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToDoApi.Tests", "ToDoApi.Tests\ToDoApi.Tests.csproj", "{4FB75364-2E21-4E9E-BF46-9D24140AEB7B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{15302FFE-64A4-496B-B5C3-2C46CBCEFEF3}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +28,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {03C8E521-B925-457E-A682-A382C7145C0D}
 	EndGlobalSection
 EndGlobal
