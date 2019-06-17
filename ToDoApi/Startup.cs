@@ -72,11 +72,6 @@ namespace ToDoApi
 
         private static void InitializeDatabase(ITodoRepository repo)
         {
-            var todoList = repo.GetAll();
-            if (!todoList.Any())
-            {
-                repo.Create(GetTestTodo());
-            }
         }
     }
 }
