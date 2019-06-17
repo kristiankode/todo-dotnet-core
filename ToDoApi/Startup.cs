@@ -13,6 +13,8 @@ namespace ToDoApi
 {
     public class Startup
     {
+        private const string AllowLocalhostCors = "AllowLocalhost";
+
         public Startup(IHostingEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -32,6 +34,11 @@ namespace ToDoApi
 
             // Add framework services.
             services.AddMvc();
+            services.AddCors(options =>
+            {
+                options.AddPolicy(AllowLocalhostCors, 
+                    builder => { builder.WithOrigins("http://localhost:3000"); });
+            });
 
             services.AddSingleton<ITodoRepository, TodoRepository>();
         }
@@ -46,6 +53,7 @@ namespace ToDoApi
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCors(AllowLocalhostCors);
 
                 var repository = app.ApplicationServices.GetService<ITodoRepository>();
                 InitializeDatabase(repository);
