@@ -24,10 +24,10 @@ context('Actions', () => {
       .get('#add-btn').click()
       .get('#todo-list').contains(todoText)
       .get('[data-cy=delete-btn]').click()
-      .get('#todo-list').should('not.contain')
+      .get('#todo-list').should('not.contain', todoText)
 
       // reload the page and verify that it is still gone.
       .reload()
-      .get('#todo-list').should('not.contain')
+      .get('#todo-list').should('not.contain', todoText)
   });
 })
