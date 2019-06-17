@@ -21,7 +21,7 @@ class TodoList extends Component {
       );
     });
     return (
-      <ul className="list-group"> {items} </ul>
+      <ul className="list-group" id="todo-list"> {items} </ul>
     );
   }
 }
@@ -48,7 +48,9 @@ class TodoListItem extends Component {
         <div className={todoClass}>
           <span className="glyphicon glyphicon-ok icon" aria-hidden="true" onClick={this.onClickDone}></span>
           {this.props.item.value}
-          <button type="button" className="close" onClick={this.onClickClose}>&times;</button>
+          <button type="button" className="close" 
+            data-cy="delete-btn"
+            onClick={this.onClickClose}>&times;</button>
         </div>
       </li>     
     );
@@ -75,8 +77,9 @@ class TodoForm extends Component {
   render () {
     return (
       <form ref="form" onSubmit={this.onSubmit} className="form-inline">
-        <input type="text" ref="itemName" className="form-control" placeholder="add a new todo..."/>
-        <button type="submit" className="btn btn-default">Add</button> 
+        <input id="new-todo"
+        type="text" ref="itemName" className="form-control" placeholder="add a new todo..."/>
+        <button id="add-btn" type="submit" className="btn btn-default">Add</button> 
       </form>
     );   
   }
