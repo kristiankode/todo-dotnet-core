@@ -12,11 +12,8 @@ TodoApp
 	- TodoForm
 */
 var todoItems = [];
-  todoItems.push({index: 1, value: "learn react", done: false});
-  todoItems.push({index: 2, value: "Go shopping", done: true});
-  todoItems.push({index: 3, value: "buy flowers", done: true});
 
-class TodoList extends React.Component {
+class TodoList extends Component {
   render () {
     var items = this.props.items.map((item, index) => {
       return (
@@ -29,7 +26,7 @@ class TodoList extends React.Component {
   }
 }
   
-class TodoListItem extends React.Component {
+class TodoListItem extends Component {
   constructor(props) {
     super(props);
     this.onClickClose = this.onClickClose.bind(this);
@@ -58,7 +55,7 @@ class TodoListItem extends React.Component {
   }
 }
 
-class TodoForm extends React.Component {
+class TodoForm extends Component {
   constructor(props) {
     super(props);
     this.onSubmit = this.onSubmit.bind(this);
@@ -85,13 +82,13 @@ class TodoForm extends React.Component {
   }
 }
   
-class TodoHeader extends React.Component {
+class TodoHeader extends Component {
   render () {
     return <h1>Todo list</h1>;
   }
 }
   
-class TodoApp extends React.Component {
+class TodoApp extends Component {
   state = {
     todoItems: todoItems
   }
@@ -101,6 +98,14 @@ class TodoApp extends React.Component {
     this.removeItem = this.removeItem.bind(this);
     this.markTodoDone = this.markTodoDone.bind(this);
     this.state = {todoItems: todoItems};
+  }
+  componentWillMount(){
+    fetch('http://localhost:60154/todos')
+    .then(results => results.json())
+    .then(items => {
+      var todos = items.map(todo => ({index: todo.id, value: todo.name}));
+      this.setState({todoItems: todos})
+    });
   }
   addItem(todoItem) {
     todoItems.unshift({
