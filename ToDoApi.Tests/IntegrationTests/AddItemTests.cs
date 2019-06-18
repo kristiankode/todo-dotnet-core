@@ -21,10 +21,7 @@ namespace ToDoApi.Tests.IntegrationTests
         {
             var todoList = new Todo {Name = "My list", TodoItems = new List<TodoItem>()};
 
-            var reqBody = JsonHelper.ConvertObjectToStringContent(todoList);
-            var response = await _client.PostAsync("/todos", reqBody);
-
-            response.EnsureSuccessStatusCode();
+            var response = await CreateTodoList(todoList);
 
             var responseBody = await response.Content.ReadAsStringAsync();
             var createdTodo = JsonHelper.ConvertStringToObject<Todo>(responseBody);
@@ -39,12 +36,22 @@ namespace ToDoApi.Tests.IntegrationTests
             Assert.True(myList.Id > 0, "New todo should be assigned an ID.");
         }
 
+        private async Task<HttpResponseMessage> CreateTodoList(Todo todoList)
+        {
+            var reqBody = JsonHelper.ConvertObjectToStringContent(todoList);
+            var response = await _client.PostAsync("/todos", reqBody);
+
+            response.EnsureSuccessStatusCode();
+            return response;
+        }
+
         [Fact]
         public async Task Added_item_should_be_persisted()
         {
-            var todos = await GetAllTodos();
+            await CreateTodoList(new Todo {Name = "Test todo", TodoItems = new List<TodoItem>()});
 
-            var existingId = todos.First().Id; // the default 
+            var todos = await GetAllTodos();
+            var existingId = todos.First().Id; 
 
             var newItem = new TodoItem
             {

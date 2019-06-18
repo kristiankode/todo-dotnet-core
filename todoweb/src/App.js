@@ -14,7 +14,7 @@ TodoApp
 var todoItems = [];
 
 class TodoList extends Component {
-  render () {
+  render() {
     var items = this.props.items.map((item, index) => {
       return (
         <TodoListItem key={index} item={item} index={index} removeItem={this.props.removeItem} markTodoDone={this.props.markTodoDone} />
@@ -25,7 +25,7 @@ class TodoList extends Component {
     );
   }
 }
-  
+
 class TodoListItem extends Component {
   constructor(props) {
     super(props);
@@ -40,19 +40,19 @@ class TodoListItem extends Component {
     var index = parseInt(this.props.index);
     this.props.markTodoDone(index);
   }
-  render () {
-    var todoClass = this.props.item.done ? 
-        "done" : "undone";
-    return(
+  render() {
+    var todoClass = this.props.item.done ?
+      "done" : "undone";
+    return (
       <li className="list-group-item ">
         <div className={todoClass}>
           <span className="glyphicon glyphicon-ok icon" aria-hidden="true" onClick={this.onClickDone}></span>
           {this.props.item.value}
-          <button type="button" className="close" 
+          <button type="button" className="close"
             data-cy="delete-btn"
             onClick={this.onClickClose}>&times;</button>
         </div>
-      </li>     
+      </li>
     );
   }
 }
@@ -68,25 +68,26 @@ class TodoForm extends Component {
   onSubmit(event) {
     event.preventDefault();
     var newItemValue = this.refs.itemName.value;
-    
-    if(newItemValue) {
-      this.props.addItem({newItemValue});
+
+    if (newItemValue) {
+      this.props.addItem({ newItemValue });
       this.refs.form.reset();
     }
   }
-  render () {
+  render() {
     return (
       <form ref="form" onSubmit={this.onSubmit} className="form-inline">
         <input id="new-todo"
-        type="text" ref="itemName" className="form-control" placeholder="add a new todo..."/>
-        <button id="add-btn" type="submit" className="btn btn-default">Add</button> 
+          type="text" ref="itemName" className="form-control" placeholder="add a new todo..." />
+        <button id="add-btn" type="submit" className="btn btn-default">Add</button>
       </form>
-    );   
+    );
   }
 }
 
 const TodoHeader = props => <h1>{props.name}</h1>
-  
+const baseUrl = 'http://localhost:60154'
+
 class TodoApp extends Component {
   state = {
     listId: null,
@@ -94,65 +95,85 @@ class TodoApp extends Component {
     todoItems: [],
     loading: true
   }
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.addItem = this.addItem.bind(this);
     this.removeItem = this.removeItem.bind(this);
     this.markTodoDone = this.markTodoDone.bind(this);
+    this.loadData = this.loadData.bind(this);
   }
 
-  componentWillMount(){
-    fetch('http://localhost:60154/todos')
-    .then(results => results.json())
-    .then(lists => lists && lists.length ? lists[0] : {index: 0, name: "No todolist found", todoItems: []})
-    .then(list => {
-      console.log(list);
-      var todos = list.todoItems.map(todo => (
-        {
-          index: todo.id, 
-          value: todo.name,
-          done: todo.isComplete
-        }));
-
-      this.setState({
-        listId: list.id,
-        listName: list.name,
-        todoItems: todos,
-        loading: false
-      });
-    })
+  componentWillMount() {
+      this.loadData();
   }
+
+  loadData(){
+    fetch(baseUrl + '/todos')
+      .then(results => results.json())
+      .then(lists => lists && lists.length ? lists[0] : { index: 0, name: "No todolist found", todoItems: [] })
+      .then(list => {
+        console.log(list);
+        var todos = list.todoItems.map(todo => (
+          {
+            index: todo.id,
+            value: todo.name,
+            done: todo.isComplete
+          }));
+
+        this.setState({
+          listId: list.id,
+          listName: list.name,
+          todoItems: todos,
+          loading: false
+        });
+      })
+  }
+
   addItem(todoItem) {
-    todoItems.unshift({
-      index: todoItems.length+1, 
-      value: todoItem.newItemValue, 
-      done: false
+    fetch(baseUrl + '/todos/' + this.state.listId, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: todoItem.newItemValue,
+        isComplete: false
+      })
     });
-    this.setState({todoItems: todoItems});
+
+    let todos = this.state.todoItems;
+    todos.unshift({
+      index: todos.length + 1,
+      value: todoItem.newItemValue,
+      done: todoItem.isComplete
+    });
+    this.setState({todoItems: todos})
   }
-  removeItem (itemIndex) {
-    todoItems.splice(itemIndex, 1);
-    this.setState({todoItems: todoItems});
+  removeItem(itemIndex) {
+    let todos = this.state.todoItems;
+    todos.splice(itemIndex, 1);
+    this.setState({ todoItems: todos });
   }
   markTodoDone(itemIndex) {
-    var todo = todoItems[itemIndex];
+    var todo = this.state.todoItems[itemIndex];
     todoItems.splice(itemIndex, 1);
     todo.done = !todo.done;
     todo.done ? todoItems.push(todo) : todoItems.unshift(todo);
-    this.setState({todoItems: todoItems});  
+    this.setState({ todoItems: todoItems });
   }
   render() {
-    if(this.state.loading){
-      return(
-      <div id="main">
-        <TodoHeader name="Loading..." />
-      </div>
+    if (this.state.loading) {
+      return (
+        <div id="main">
+          <TodoHeader name="Loading..." />
+        </div>
       );
     }
     return (
       <div id="main">
-        <TodoHeader name={this.state.listName}/>
-        <TodoList items={this.state.todoItems} removeItem={this.removeItem} markTodoDone={this.markTodoDone}/>
+        <TodoHeader name={this.state.listName} />
+        <TodoList items={this.state.todoItems} removeItem={this.removeItem} markTodoDone={this.markTodoDone} />
         <TodoForm addItem={this.addItem} />
       </div>
     );

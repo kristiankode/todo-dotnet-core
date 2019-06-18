@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ToDoApi.Models;
 using ToDoApi.Repository;
+using ToDoApi.Validation;
 
 namespace ToDoApi.Controllers
 {
@@ -126,7 +127,7 @@ namespace ToDoApi.Controllers
         [HttpPut("items/{id}")]
         public IActionResult UpdateItem(long id, [FromBody] TodoItem payload)
         {
-            if (payload == null || !payload.CheckValidName())
+            if (payload == null || !NameValidator.IsValid(payload.Name))
             {
                 return BadRequest();
             }

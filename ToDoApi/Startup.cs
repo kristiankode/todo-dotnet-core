@@ -37,8 +37,15 @@ namespace ToDoApi
             services.AddMvc();
             services.AddCors(options =>
             {
-                options.AddPolicy(AllowLocalhostCors, 
-                    builder => { builder.WithOrigins("http://localhost:3000"); });
+                options.AddPolicy(AllowLocalhostCors,
+                    builder =>
+                    {
+                        builder
+                            .WithOrigins("http://localhost:3000")
+                            .AllowAnyOrigin()
+                            .AllowAnyHeader()
+                            .AllowAnyMethod();
+                    });
             });
 
             services.AddSingleton<ITodoRepository, TodoRepository>();
