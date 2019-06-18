@@ -84,31 +84,43 @@ class TodoForm extends Component {
     );   
   }
 }
-  
-class TodoHeader extends Component {
-  render () {
-    return <h1>Todo list</h1>;
-  }
-}
+
+const TodoHeader = props => <h1>{props.name}</h1>
   
 class TodoApp extends Component {
   state = {
-    todoItems: todoItems
+    listId: null,
+    listName: null,
+    todoItems: [],
+    loading: true
   }
   constructor (props) {
     super(props);
     this.addItem = this.addItem.bind(this);
     this.removeItem = this.removeItem.bind(this);
     this.markTodoDone = this.markTodoDone.bind(this);
-    this.state = {todoItems: todoItems};
   }
+
   componentWillMount(){
     fetch('http://localhost:60154/todos')
     .then(results => results.json())
-    .then(items => {
-      var todos = items.map(todo => ({index: todo.id, value: todo.name}));
-      this.setState({todoItems: todos})
-    });
+    .then(lists => lists && lists.length ? lists[0] : {index: 0, name: "No todolist found", todoItems: []})
+    .then(list => {
+      console.log(list);
+      var todos = list.todoItems.map(todo => (
+        {
+          index: todo.id, 
+          value: todo.name,
+          done: todo.isComplete
+        }));
+
+      this.setState({
+        listId: list.id,
+        listName: list.name,
+        todoItems: todos,
+        loading: false
+      });
+    })
   }
   addItem(todoItem) {
     todoItems.unshift({
@@ -130,9 +142,16 @@ class TodoApp extends Component {
     this.setState({todoItems: todoItems});  
   }
   render() {
+    if(this.state.loading){
+      return(
+      <div id="main">
+        <TodoHeader name="Loading..." />
+      </div>
+      );
+    }
     return (
       <div id="main">
-        <TodoHeader />
+        <TodoHeader name={this.state.listName}/>
         <TodoList items={this.state.todoItems} removeItem={this.removeItem} markTodoDone={this.markTodoDone}/>
         <TodoForm addItem={this.addItem} />
       </div>
