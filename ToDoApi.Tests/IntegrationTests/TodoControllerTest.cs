@@ -38,7 +38,7 @@ namespace ToDoApi.Tests.IntegrationTests
         public async Task CreatePost_ReturnsBadRequest_GivenNullBody()
         {
             // Arrange
-            var newTodo = ConvertObjectToStringContent(null);
+            var newTodo = JsonHelper.ConvertObjectToStringContent(null);
 
             // Act
             var response = await _client.PostAsync("/todos", newTodo);
@@ -51,7 +51,7 @@ namespace ToDoApi.Tests.IntegrationTests
         public async Task CreatePost_ReturnsBadRequest_GivenInvlidName()
         {
             // Arrange
-            var body = ConvertObjectToStringContent(new Todo {Name = "ห้ามภาษาไทย"});
+            var body = JsonHelper.ConvertObjectToStringContent(new Todo {Name = "ห้ามภาษาไทย"});
 
             // Act
             var response = await _client.PostAsync("/todos", body);
@@ -67,7 +67,7 @@ namespace ToDoApi.Tests.IntegrationTests
             var newTodo = new Todo {Name = "Test Todo", TodoItems = new List<TodoItem>()};
             newTodo.TodoItems.Add(new TodoItem {Name = "Item 1"});
             newTodo.TodoItems.Add(new TodoItem {Name = "Item 2"});
-            var body = ConvertObjectToStringContent(newTodo);
+            var body = JsonHelper.ConvertObjectToStringContent(newTodo);
 
             // Act
             var response = await _client.PostAsync("/todos", body);
@@ -76,20 +76,10 @@ namespace ToDoApi.Tests.IntegrationTests
             response.EnsureSuccessStatusCode();
 
             var returnedSession = await response.Content.ReadAsStringAsync();
-            var credtedTodo = ConvertStringToObject<Todo>(returnedSession);
+            var credtedTodo = JsonHelper.ConvertStringToObject<Todo>(returnedSession);
             Assert.Equal("Test Todo", credtedTodo.Name);
             Assert.Equal(2, credtedTodo.TodoItems.Count);
             Assert.True(credtedTodo.TodoItems.Any(i => i.TodoId == credtedTodo.Id));
-        }
-
-        private static StringContent ConvertObjectToStringContent(object obj)
-        {
-            return new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
-        }
-
-        private static T ConvertStringToObject<T>(string str)
-        {
-            return JsonConvert.DeserializeObject<T>(str);
         }
     }
 }

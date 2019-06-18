@@ -96,16 +96,12 @@ namespace ToDoApi.Controllers
         [HttpPost("{todoId}")]
         public IActionResult AddItem(long todoId, [FromBody] TodoItem item)
         {
-            if (item == null || !item.CheckValidName())
-            {
+            if (item == null)
                 return BadRequest();
-            }
 
             var todo = _todoRepository.Find(todoId);
             if (todo == null)
-            {
                 return NotFound();
-            }
 
             item.TodoId = todoId;
 

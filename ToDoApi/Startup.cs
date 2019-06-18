@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -66,12 +67,15 @@ namespace ToDoApi
         {
             return new Todo
             {
-                Name = "Test Todo 1"
+                Name = "Test Todo 1",
+                TodoItems = new List<TodoItem>()
             };
         }
 
         private static void InitializeDatabase(ITodoRepository repo)
         {
+            if(!repo.GetAll().Any())
+                repo.Create(GetTestTodo());
         }
     }
 }
