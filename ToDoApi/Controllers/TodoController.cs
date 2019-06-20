@@ -114,14 +114,10 @@ namespace ToDoApi.Controllers
         [HttpDelete("items/{id}")]
         public IActionResult DeleteItem(long id)
         {
-            var todo = _todoRepository.FindItem(id);
-            if (todo == null)
-            {
-                return NotFound();
-            }
+            if(_todoRepository.FindItem(id) != null)
+                _todoRepository.RemoveItem(id);
 
-            _todoRepository.RemoveItem(id);
-            return new NoContentResult();
+            return NoContent();
         }
 
         [HttpPut("items/{id}")]

@@ -24,7 +24,7 @@ namespace ToDoApi.Tests.IntegrationTests
             var response = await CreateTodoList(todoList);
 
             var responseBody = await response.Content.ReadAsStringAsync();
-            var createdTodo = JsonHelper.ConvertStringToObject<Todo>(responseBody);
+            var createdTodo = JsonHelper.ToObject<Todo>(responseBody);
 
             Assert.Equal(createdTodo.Name, "My list");
 
@@ -73,6 +73,52 @@ namespace ToDoApi.Tests.IntegrationTests
             Assert.NotEmpty(refetched.TodoItems);
         }
 
+
+        [Fact]
+        public async void DeletedItem_should_be_removed()
+        {
+            var myTodo = new Todo
+            {
+                Id = 313,
+                Name = "Delete",
+                TodoItems = new List<TodoItem>
+                {
+                    new TodoItem
+                    {
+                        Id=3131, Name = "Delete me",
+                        TodoId = 313
+                    }, 
+                    new TodoItem
+                    {
+                        Id = 3132, Name = "Don't delete me",
+                        TodoId = 313
+                    }
+                }
+            };
+
+            await CreateTodoList(myTodo);
+
+            var response = await _client.DeleteAsync("/todos/items/3131");
+            response.EnsureSuccessStatusCode();
+
+            var todo = await GetTodoList(313);
+            Assert.True(todo.TodoItems.Any(item => item.Name == "Don't delete me"));
+            Assert.False(todo.TodoItems.Any(item => item.Name == "Delete me"));
+            Assert.Equal( 1, todo.TodoItems.Count);
+        }
+
+
+        private async Task<Todo> GetTodoList(long id)
+        {
+            var result = await _client.GetAsync($"/todos/{id}");
+            result.EnsureSuccessStatusCode();
+
+            var body = await result.Content.ReadAsStringAsync();
+            var todo = JsonHelper.ToObject<Todo>(body);
+
+            return todo;
+
+        }
         private async Task<List<Todo>> GetAllTodos()
         {
             // Get all todolists in the database
@@ -82,7 +128,7 @@ namespace ToDoApi.Tests.IntegrationTests
             allLists.EnsureSuccessStatusCode();
 
             var responseBody = await allLists.Content.ReadAsStringAsync();
-            var todos = JsonHelper.ConvertStringToObject<List<Todo>>(responseBody);
+            var todos = JsonHelper.ToObject<List<Todo>>(responseBody);
             return todos;
         }
     }

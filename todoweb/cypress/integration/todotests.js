@@ -6,9 +6,9 @@ context('Actions', () => {
   })
 
   it('checks that a new element is persisted.', () => {
-    const todoText = 'Test the app';
+    const todoText = 'Add an item';
     cy.get('input#new-todo')
-      .type('Test the app').should('have.value', todoText)
+      .type(todoText).should('have.value', todoText)
       .get('#add-btn').click()
       .get('#todo-list').contains(todoText)
 
@@ -17,17 +17,22 @@ context('Actions', () => {
       .get('#todo-list').contains(todoText)
   });
 
-  it('checks that a deleted element is removed.', () => {
-    const todoText = 'Remove an item';
-    cy.get('input#new-todo')
-      .type(todoText).should('have.value', todoText)
-      .get('#add-btn').click()
-      .get('#todo-list').contains(todoText)
-      .get('[data-cy=delete-btn]').click()
-      .get('#todo-list').should('not.contain', todoText)
+  it('checks that a deleted item does not reappear', () => {
 
-      // reload the page and verify that it is still gone.
+    cy.get('input#new-todo')
+      .type('Delete me plz')
+      .should('have.value', 'Delete me plz')
+      .get('#add-btn').click()
       .reload()
-      .get('#todo-list').should('not.contain', todoText)
+
+      .get('#todo-list')
+      .contains('Delete me plz').find('[data-cy=delete-btn]').click()
+      .get('#todo-list').should('not.contain', 'Delete me plz')
+
+      .reload()
+      .get('#todo-list')
+      .should('be.visible')
+      .should('not.contain', 'Delete me plz')
   });
+
 })
