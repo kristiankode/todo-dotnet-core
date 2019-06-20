@@ -24,7 +24,7 @@ namespace ToDoApi.Tests.IntegrationTests
             var response = await CreateTodoList(todoList);
 
             var responseBody = await response.Content.ReadAsStringAsync();
-            var createdTodo = JsonHelper.ConvertStringToObject<Todo>(responseBody);
+            var createdTodo = JsonHelper.ToObject<Todo>(responseBody);
 
             Assert.Equal(createdTodo.Name, "My list");
 
@@ -82,7 +82,7 @@ namespace ToDoApi.Tests.IntegrationTests
             allLists.EnsureSuccessStatusCode();
 
             var responseBody = await allLists.Content.ReadAsStringAsync();
-            var todos = JsonHelper.ConvertStringToObject<List<Todo>>(responseBody);
+            var todos = JsonHelper.ToObject<List<Todo>>(responseBody);
             return todos;
         }
     }
