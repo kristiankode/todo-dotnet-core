@@ -76,7 +76,7 @@ namespace ToDoApi.Tests.IntegrationTests
             response.EnsureSuccessStatusCode();
 
             var returnedSession = await response.Content.ReadAsStringAsync();
-            var credtedTodo = JsonHelper.ConvertStringToObject<Todo>(returnedSession);
+            var credtedTodo = JsonHelper.ToObject<Todo>(returnedSession);
             Assert.Equal("Test Todo", credtedTodo.Name);
             Assert.Equal(2, credtedTodo.TodoItems.Count);
             Assert.True(credtedTodo.TodoItems.Any(i => i.TodoId == credtedTodo.Id));

@@ -12,7 +12,7 @@ namespace ToDoApi.Tests.IntegrationTests
             return new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
         }
 
-        public static T ConvertStringToObject<T>(string str)
+        public static T ToObject<T>(string str)
         {
             return JsonConvert.DeserializeObject<T>(str);
         }

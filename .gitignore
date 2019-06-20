@@ -3,3 +3,11 @@
 .DS_STORE
 \.vs/**
 todoweb/node_modules/*
+
+*.ncrunchproject
+
+ToDoApi\.Tests/ToDoApi\.Tests\.v3\.ncrunchproject\.user
+
+*.ncrunchsolution
+
+ToDoApi\.v3\.ncrunchsolution\.user
